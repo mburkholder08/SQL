@@ -1,0 +1,114 @@
+
+--  1. Provide the SQL code to list the DVDs that were returned later than their due date.
+
+select  title, return_date, date_Add(rental_date, INTERVAL rental_duration day) as duedate
+from film f
+join inventory i 
+on f.film_id = i.film_id
+join rental r 
+on r.inventory_id = i.inventory_id
+and return_date>date_Add(rental_date, INTERVAL rental_duration day) ;
+
+
+-- 2. How many DVDs were returned on time? Provide the code and the output.
+
+select  count(*) as "DVDs were returned on time"
+from film f
+join inventory i 
+on f.film_id = i.film_id
+join rental r 
+on r.inventory_id = i.inventory_id
+and return_date<=date_Add(rental_date, INTERVAL rental_duration day) ;
+
+-- 3. Provide the code to find the category name, category id, and number of movies in each movie category.
+
+select name AS "category name", C.category_id AS "category id",  count(*) as "number of movies"
+FROM CATEGORY C
+JOIN film_category FC
+ON FC.category_id = C.category_id
+group by name, C.category_id;
+
+
+-- 4. Provide the code to find the names of actors and the drama movies that they acted in. How many records are there in your query result?
+
+SELECT CONCAT(first_name, ' ',  last_name) AS "name", title
+from  actor a
+join film_actor fa
+on a.actor_id = fa.actor_id
+join film f
+on f.film_id =  fa.film_id;
+
+-- 5. Provide the code to find the number of customers living in each city.
+
+select city, count(*) "number of customers"
+from city c
+join address a
+on a.city_id = c.city_id
+join customer cu 
+on cu.address_id = a.address_id
+group by city;
+
+-- 6. Provide the code to find the names of the top 20 customers who have rented the most movies.
+
+select concat(first_name, ' ', last_name) as name
+from customer c
+join rental r
+on c.customer_id = r.customer_id
+group by concat(first_name, ' ', last_name)
+order by count(*) desc
+limit 20;
+
+
+-- 7. Find the names of the top 5 most rented movies. How many times were they rented? Provide the code and output.
+
+select title, count(*) as "Number of time Rented"
+from film f
+join inventory i 
+on f.film_id = i.film_id
+join rental r 
+on r.inventory_id = i.inventory_id
+group by title
+order by  count(*) desc
+limit 5;
+
+-- 8. Provide the code to find the movies that each actor has acted in.
+
+select distinct title from film f
+join film_actor fa
+on f.film_id = fa.film_id
+join actor a 
+on a.actor_id = fa.actor_id;
+
+
+-- 9. Find the top 5 actors whose movies were rented the most. Provide the code and output.
+
+SELECT CONCAT(first_name, ' ',  last_name) AS "name"
+from  actor a
+join film_actor fa
+on a.actor_id = fa.actor_id
+join film f
+on f.film_id = fa.film_id
+join inventory i 
+on f.film_id = i.film_id
+join rental r 
+on r.inventory_id = i.inventory_id
+group by CONCAT(first_name, ' ',  last_name)
+order by  count(*) desc
+limit 5;
+
+-- 10. Show your code of finding the top five movies that earned the most money for the rental business. 
+-- Also list the number of times the movies were rent out. Show results.
+
+select title, count(*) as "Number of time Rented"
+from film f
+join inventory i 
+on f.film_id = i.film_id
+join rental r 
+on r.inventory_id = i.inventory_id
+join payment p 
+on p.rental_id = r.rental_id
+group by title
+order by  sum(amount) desc
+limit 5;
+
+
