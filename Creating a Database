@@ -1,0 +1,73 @@
+ create database quizdb;
+ use quizdb;
+
+create table student 
+(
+studnet_id int primary key, 
+student_name varchar(20) not null, 
+address varchar(30), 
+email varchar(30) unique
+);
+
+Create table courses 
+(
+Course_Code char(5) primary key, 
+Course_Title varchar(50) not null, 
+Course_Description varchar(200), 
+Credit_Hours int 
+);
+
+Create table course_Enrollment
+(
+enrollment_ID INT auto_increment primary key, 
+studnet_id int, 
+Course_Code char(5), 
+Enrollment_Date Date , 
+foreign key (studnet_id) references   student(studnet_id), 
+foreign key (Course_Code) references   courses(Course_Code)
+);
+
+Create table Quiz 
+(
+Quiz_ID INT auto_increment primary key, 
+Quiz_Tite varchar(30) not null, 
+Quiz_Date date, 
+Course_Code char(5), 
+foreign key(Course_Code) references courses (Course_Code)
+);
+
+Create table Questions
+(
+Question_ID int auto_increment primary key, 
+Question varchar(10) not null, 
+Course_Code char(5), 
+foreign key(Course_Code) references courses (Course_Code)
+);
+
+create table Multichoice_Question
+(
+id int auto_increment primary key, 
+choice_no char(1), 
+choice_detail varchar(20),
+Question_ID int, 
+correct_status bit, 
+foreign key(Question_ID) references Questions (Question_ID)
+);
+
+create table Quiz_Question 
+(
+Quiz_ID INT, 
+Question_ID int, 
+primary key (Quiz_ID, Question_ID), 
+foreign key(Question_ID) references Questions (Question_ID), 
+foreign key(Quiz_ID) references Quiz (Quiz_ID)
+);
+
+create table student_Quiz
+(
+studnet_id int, 
+Quiz_ID INT, 
+primary key (Quiz_ID, studnet_id),
+foreign key(Quiz_ID) references Quiz (Quiz_ID), 
+foreign key (studnet_id) references   student(studnet_id)
+);
